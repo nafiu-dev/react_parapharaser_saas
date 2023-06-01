@@ -1,25 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Api from './Apis/Api'
+
+const App = () => {
+    const [loadin, setLoading] = useState(true)
+    const [input, setinput] = useState("")
+    const [similarity, Setsimilarity] = useState(0)
+    const [result, SetResult] = useState("")
+
+    
+    const handleClick = async input => {
+        setLoading(true)
+        const res = await Api(input)
+        
+        setLoading(false)
+        SetResult(res.output) 
+        Setsimilarity(res.similarity) 
+ 
+    }
+
+
+    return (
+        <div className='container'>
+            <div className="text_box">
+                <textarea onChange={e => setinput(e.target.value)} >{input}</textarea>
+                { 
+                    loadin ? 
+                    ( <textarea class="loading" disabled ></textarea>) 
+                    :
+                    (
+                        <textarea value={result}>{result}</textarea>
+                    )
+                }
+            </div>
+            <div className="button_box">
+                <button onClick={() => {handleClick(input)}}>Paraphrase</button>
+                {similarity > 0 ? (<p>similarity: <span>{similarity}</span></p>): null}
+            </div>
+        </div>
+    )
 }
 
-export default App;
+export default App
